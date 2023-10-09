@@ -1,8 +1,66 @@
-from datetime import date, datetime
+from datetime import date
+from datetime import datetime
+
+
+def day_change(birthday_arr: list, b_date: date, user, current_date: date):
+    get_day = b_date.strftime("%A")
+
+    if b_date.month == 12 and b_date.day == 30 and get_day == "Saturday":
+        b_date = b_date.replace(day=1, month=1, year=current_date.year + 1)
+        user["birthday"] = b_date
+        birthday_arr.append(user)
+    elif b_date.month == 12 and b_date.day == 30 and get_day == "Sunday":
+        b_date = b_date.replace(day=1, month=1, year=current_date.year + 1)
+        user["birthday"] = b_date
+        birthday_arr.append(user)
+    elif b_date.month == 12 and b_date.day == 31 and get_day == "Saturday":
+        b_date = b_date.replace(day=2, month=1, year=current_date.year + 1)
+        user["birthday"] = b_date
+        birthday_arr.append(user)
+    elif b_date.month == 12 and b_date.day == 31 and get_day == "Sunday":
+        b_date = b_date.replace(day=1, month=1, year=current_date.year + 1)
+        user["birthday"] = b_date
+        birthday_arr.append(user)
+    else:
+        if get_day == "Saturday":
+            if b_date.day == 30:
+                b_date = b_date.replace(day=1, month=current_date.month + 1)
+                user["birthday"] = b_date
+                birthday_arr.append(user)
+            elif b_date.day == 31:
+                b_date = b_date.replace(day=1, month=current_date.month + 1)
+                user["birthday"] = b_date
+                birthday_arr.append(user)
+            else:
+                b_date = b_date.replace(day=b_date.day + 2)
+                user["birthday"] = b_date
+                birthday_arr.append(user)
+        elif get_day == "Sunday":
+            if b_date.day == 30:
+                b_date = b_date.replace(
+                    day=current_date.day + 1, month=current_date.month + 1
+                )
+                user["birthday"] = b_date
+                birthday_arr.append(user)
+            elif b_date.day == 31:
+                b_date = b_date.replace(
+                    day=current_date.day + 1, month=current_date.month + 1
+                )
+                user["birthday"] = b_date
+                birthday_arr.append(user)
+            else:
+                b_date = b_date.replace(day=b_date.day + 1)
+                user["birthday"] = b_date
+                birthday_arr.append(user)
+        else:
+            user["birthday"] = b_date
+            birthday_arr.append(user)
+    return birthday_arr
 
 
 def get_birthdays_per_week(users):
-    current_date = date.today()
+    # current_date = date.today()
+    current_date = date(2024, 6, 30)
     birthday_arr = []
 
     for user in users:
@@ -11,32 +69,18 @@ def get_birthdays_per_week(users):
 
         if bd.month >= current_date.month:
             if bd.day <= current_date.day and bd.month == current_date.month:
-                continue
-            else:
-                get_day = bd.strftime("%A")
-
-                if get_day == "Saturday":
-                    bd = bd.replace(day=bd.day + 2)
-                    user["birthday"] = bd
-                    birthday_arr.append(user)
-                elif get_day == "Sunday":
-                    bd = bd.replace(day=bd.day + 1)
-                    user["birthday"] = bd
-                    birthday_arr.append(user)
+                if bd.day == current_date.day:
+                    day_change(birthday_arr, bd, user, current_date)
                 else:
-                    user["birthday"] = bd
-                    birthday_arr.append(user)
+                    continue
+            else:
+                day_change(birthday_arr, bd, user, current_date)
     return birthday_arr
 
 
 if __name__ == "__main__":
     users = [
-        {"name": "Jan Koum", "birthday": datetime(1976, 1, 1).date()},
-        {"name": "Bill", "birthday": date(1990, 10, 29)},
-        {"name": "Marry", "birthday": date(2000, 10, 2)},
-        {"name": "Jinny", "birthday": date(2000, 10, 10)},
-        {"name": "Jan Koum", "birthday": datetime(1976, 11, 1).date()},
-        {"name": "Jan Koum", "birthday": datetime(1976, 10, 1).date()},
+        {"name": "Jan Koum", "birthday": date(2024, 6, 30)},
     ]
 
     result: list = get_birthdays_per_week(users)
