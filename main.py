@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 
 
-def day_change(birthday_arr: dict, b_date: date, user, current_date: date):
+def day_change(birthday_arr: dict, b_date: date, user):
     get_day = b_date.strftime("%A")
 
     if get_day == "Saturday":
@@ -32,20 +32,24 @@ def get_birthdays_per_week(users):
 
     for user in users:
         bd: date = user["birthday"]
-        # print(current_date, bd)
 
         if bd.year > current_date.year:
-            day_change(birthday_arr, bd, user, current_date)
+            day_change(birthday_arr, bd, user)
         else:
-            bd = bd.replace(year=current_date.year)
+            if bd.month == 1 and bd.day < 6:
+                bd = bd.replace(year=current_date.year + 1)
+                day_change(birthday_arr, bd, user)
+            else:
+                bd = bd.replace(year=current_date.year)
+
             if bd.month >= current_date.month:
                 if bd.day <= current_date.day and bd.month == current_date.month:
                     if bd.day == current_date.day:
-                        day_change(birthday_arr, bd, user, current_date)
+                        day_change(birthday_arr, bd, user)
                     else:
                         continue
                 else:
-                    day_change(birthday_arr, bd, user, current_date)
+                    day_change(birthday_arr, bd, user)
 
     res = combine_list(birthday_arr)
     return res
